@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Java Stack Simulator</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #141e30, #243b55);
+            min-height: 100vh;
+            color: white;
+            padding: 30px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: auto;
+            text-align: center;
+        }
+
+        h1 {
+            margin-bottom: 10px;
+            font-size: 36px;
+        }
+
+        .subtitle {
+            color: #cbd5e1;
+            margin-bottom: 30px;
+        }
+
+        .panel {
+            background: white;
+            color: #222;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .input-section {
+            margin-bottom: 25px;
+        }
+
+        input {
+            padding: 12px;
+            width: 250px;
+            border: 2px solid #ccc;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        button {
+            padding: 12px 20px;
+            margin: 5px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: bold;
+        }
+
+        .push {
+            background: #22c55e;
+            color: white;
+        }
+
+        .pop {
+            background: #ef4444;
+            color: white;
+        }
+
+        .display {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .clear {
+            background: #64748b;
+            color: white;
+        }
+
+        button:hover {
+            opacity: 0.85;
+            transform: scale(1.03);
+        }
+
+        .stack-area {
+            margin-top: 30px;
+            min-height: 350px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+        }
+
+        .stack {
+            width: 250px;
+            min-height: 300px;
+            border: 5px solid #333;
+            border-top: none;
+            display: flex;
+            flex-direction: column-reverse;
+            justify-content: flex-start;
+            padding: 10px;
+            background: #f1f5f9;
+        }
+
+        .stack-item {
+            background: #6366f1;
+            color: white;
+            margin: 5px;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 20px;
+            font-weight: bold;
+            animation: appear 0.3s ease;
+        }
+
+        @keyframes appear {
+            from {
+                transform: scale(0);
+            }
+            to {
+                transform: scale(1);
+            }
+        }
+
+        .top-label {
+            background: #f59e0b;
+            padding: 8px 20px;
+            border-radius: 8px 8px 0 0;
+            font-weight: bold;
+        }
+
+        #message {
+            margin-top: 20px;
+            font-weight: bold;
+            min-height: 25px;
+        }
+
+        .info {
+            margin-top: 30px;
+            background: #f8fafc;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: left;
+        }
+
+        .info h2 {
+            margin-bottom: 10px;
+        }
+
+        .info p {
+            margin: 8px 0;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>☕ Java Stack Simulator</h1>
+
+    <p class="subtitle">
+        Stack Creation • Insertion • Deletion • Traversal
+    </p>
+
+    <div class="panel">
+
+        <div class="input-section">
+
+            <input
+                type="number"
+                id="value"
+                placeholder="Enter value"
+            >
+
+            <br>
+
+            <button class="push" onclick="push()">
+                ➕ Insert (Push)
+            </button>
+
+            <button class="pop" onclick="pop()">
+                ❌ Delete (Pop)
+            </button>
+
+            <button class="display" onclick="displayStack()">
+                👁 Traversal
+            </button>
+
+            <button class="clear" onclick="clearStack()">
+                🗑 Clear
+            </button>
+
+        </div>
+
+        <div id="message">
+            Stack is ready.
+        </div>
+
+        <div class="stack-area">
+
+            <div class="top-label">
+                TOP
+            </div>
+
+            <div class="stack" id="stack">
+                <!-- Stack elements appear here -->
+            </div>
+
+        </div>
+
+        <div class="info">
+
+            <h2>📚 Stack Operations</h2>
+
+            <p>
+                <strong>Insert (Push):</strong>
+                Adds an element to the top of the stack.
+            </p>
+
+            <p>
+                <strong>Delete (Pop):</strong>
+                Removes the top element.
+            </p>
+
+            <p>
+                <strong>Traversal:</strong>
+                Displays all elements in the stack.
+            </p>
+
+            <p>
+                <strong>Principle:</strong>
+                LIFO — Last In, First Out
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+    // Stack creation
+    let stack = [];
+
+    // Maximum stack size
+    const MAX_SIZE = 5;
+
+
+    // INSERT / PUSH
+    function push() {
+
+        let input = document.getElementById("value");
+        let value = input.value;
+
+        if (value === "") {
+            showMessage("⚠️ Please enter a value.");
+            return;
+        }
+
+        if (stack.length >= MAX_SIZE) {
+            showMessage("❌ Stack Overflow! Stack is full.");
+            return;
+        }
+
+        stack.push(value);
+
+        input.value = "";
+
+        showMessage("✅ " + value + " inserted into stack.");
+
+        updateStack();
+    }
+
+
+    // DELETE / POP
+    function pop() {
+
+        if (stack.length === 0) {
+            showMessage("❌ Stack Underflow! Stack is empty.");
+            return;
+        }
+
+        let removed = stack.pop();
+
+        showMessage("🗑 " + removed + " deleted from stack.");
+
+        updateStack();
+    }
+
+
+    // TRAVERSAL
+    function displayStack() {
+
+        if (stack.length === 0) {
+            showMessage("Stack is empty.");
+            return;
+        }
+
+        let elements = stack.slice().reverse();
+
+        showMessage(
+            "📋 Traversal: " + elements.join(" → ")
+        );
+    }
+
+
+    // CLEAR STACK
+    function clearStack() {
+
+        stack = [];
+
+        updateStack();
+
+        showMessage("🗑 Stack cleared.");
+    }
+
+
+    // UPDATE VISUAL STACK
+    function updateStack() {
+
+        let stackElement = document.getElementById("stack");
+
+        stackElement.innerHTML = "";
+
+        for (let i = 0; i < stack.length; i++) {
+
+            let item = document.createElement("div");
+
+            item.className = "stack-item";
+
+            item.innerText = stack[i];
+
+            stackElement.appendChild(item);
+        }
+    }
+
+
+    // DISPLAY MESSAGE
+    function showMessage(message) {
+
+        document.getElementById("message").innerText = message;
+    }
+
+</script>
+
+</body>
+</html>
